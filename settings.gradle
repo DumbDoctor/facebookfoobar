@@ -1,0 +1,1 @@
+include ':HelloFacebookSample', ':facebook', ':fooapp'

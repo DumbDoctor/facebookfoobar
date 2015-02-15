@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="3.23.0"><source path="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\build\intermediates\exploded-aar\com.facebook.android\facebook\3.23.0\assets"/></dataSet><dataSet config="main"><source path="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\src\main\assets"/></dataSet><dataSet config="debug"><source path="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\src\debug\assets"/></dataSet></merger>

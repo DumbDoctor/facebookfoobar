@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\build\intermediates\exploded-aar\com.facebook.android\facebook\3.23.0\libs\android-support-v4.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="efec67655f6db90757faa37201efcee2a9ec3507">
+        <dex dex="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\build\intermediates\pre-dexed\debug\android-support-v4-05dc69e089864672901573141dae2b8e0571c14e.jar" />
+    </item>
+    <item
+        jar="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\build\intermediates\exploded-aar\com.facebook.android\facebook\3.23.0\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="21fa169e665384bd3296cac05ed560ad8452becd">
+        <dex dex="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\build\intermediates\pre-dexed\debug\classes-298d202f76fb5ddacf652fcd534475e386773d06.jar" />
+    </item>
+    <item
+        jar="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\build\intermediates\exploded-aar\com.facebook.android\facebook\3.23.0\libs\bolts-android-1.1.2.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="91c20388c9a45f62b5ed8fe0502bb76ff6251fc7">
+        <dex dex="C:\Users\Ni Jie\AndroidStudioProjects\fbfoobar\fooapp\build\intermediates\pre-dexed\debug\bolts-android-1.1.2-8641cc05e23067a01b179963c1495fa2919feadc.jar" />
+    </item>
+
+</items>
