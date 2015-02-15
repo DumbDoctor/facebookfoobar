@@ -22,7 +22,7 @@ import com.facebook.model.GraphObject;
 import java.util.ArrayList;
 import java.util.Collection;
 
-class SimpleGraphObjectCursor<T extends GraphObject> implements GraphObjectCursor<T> {
+public class SimpleGraphObjectCursor<T extends GraphObject> implements GraphObjectCursor<T> {
     private int pos = -1;
     private boolean closed = false;
     private ArrayList<T> graphObjects = new ArrayList<T>();

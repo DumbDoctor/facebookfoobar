@@ -257,7 +257,7 @@ public class PlacePickerFragment extends PickerFragment<GraphPlace> {
     }
 
     @Override
-    void setupViews(ViewGroup view) {
+    public void setupViews(ViewGroup view) {
         if (showSearchBox) {
             ListView listView = (ListView) view.findViewById(R.id.com_facebook_picker_list_view);
 
@@ -295,7 +295,7 @@ public class PlacePickerFragment extends PickerFragment<GraphPlace> {
         }
     }
 
-    void saveSettingsToBundle(Bundle outState) {
+    public void saveSettingsToBundle(Bundle outState) {
         super.saveSettingsToBundle(outState);
 
         outState.putInt(RADIUS_IN_METERS_BUNDLE_KEY, radiusInMeters);
@@ -311,17 +311,17 @@ public class PlacePickerFragment extends PickerFragment<GraphPlace> {
     }
 
     @Override
-    Request getRequestForLoadData(Session session) {
+    public Request getRequestForLoadData(Session session) {
         return createRequest(location, radiusInMeters, resultsLimit, searchText, extraFields, session);
     }
 
     @Override
-    String getDefaultTitleText() {
+    public String getDefaultTitleText() {
         return getString(R.string.com_facebook_nearby);
     }
 
     @Override
-    void logAppEvents(boolean doneButtonClicked) {
+    public void logAppEvents(boolean doneButtonClicked) {
         AppEventsLogger logger = AppEventsLogger.newLogger(this.getActivity(), getSession());
         Bundle parameters = new Bundle();
 
@@ -337,7 +337,7 @@ public class PlacePickerFragment extends PickerFragment<GraphPlace> {
     }
 
     @Override
-    PickerFragmentAdapter<GraphPlace> createAdapter() {
+    public PickerFragmentAdapter<GraphPlace> createAdapter() {
         PickerFragmentAdapter<GraphPlace> adapter = new PickerFragmentAdapter<GraphPlace>(
                 this.getActivity()) {
             @Override
@@ -373,12 +373,12 @@ public class PlacePickerFragment extends PickerFragment<GraphPlace> {
     }
 
     @Override
-    LoadingStrategy createLoadingStrategy() {
+    public LoadingStrategy createLoadingStrategy() {
         return new AsNeededLoadingStrategy();
     }
 
     @Override
-    SelectionStrategy createSelectionStrategy() {
+    public SelectionStrategy createSelectionStrategy() {
         return new SingleSelectionStrategy();
     }
 
@@ -489,8 +489,8 @@ public class PlacePickerFragment extends PickerFragment<GraphPlace> {
         }
 
         @Override
-        protected void onLoadFinished(GraphObjectPagingLoader<GraphPlace> loader,
-                SimpleGraphObjectCursor<GraphPlace> data) {
+        public void onLoadFinished(GraphObjectPagingLoader<GraphPlace> loader,
+                                   SimpleGraphObjectCursor<GraphPlace> data) {
             super.onLoadFinished(loader, data);
 
             // We could be called in this state if we are clearing data or if we are being re-attached

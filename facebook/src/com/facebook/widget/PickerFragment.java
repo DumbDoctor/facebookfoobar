@@ -108,7 +108,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
     private Drawable doneButtonBackground;
     private boolean appEventsLogged;
 
-    PickerFragment(Class<T> graphObjectClass, int layout, Bundle args) {
+    public PickerFragment(Class<T> graphObjectClass, int layout, Bundle args) {
         this.graphObjectClass = graphObjectClass;
         this.layout = layout;
 
@@ -517,7 +517,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         setPickerFragmentSettingsFromBundle(inState);
     }
 
-    void setupViews(ViewGroup view) {
+    public void setupViews(ViewGroup view) {
     }
 
     boolean filterIncludesItem(T graphObject) {
@@ -527,7 +527,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         return true;
     }
 
-    List<T> getSelectedGraphObjects() {
+    protected List<T> getSelectedGraphObjects() {
         return adapter.getGraphObjectsById(selectionStrategy.getSelectedIds());
     }
 
@@ -539,7 +539,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         }
     }
 
-    void saveSettingsToBundle(Bundle outState) {
+    public void saveSettingsToBundle(Bundle outState) {
         outState.putBoolean(SHOW_PICTURES_BUNDLE_KEY, showPictures);
         if (!extraFields.isEmpty()) {
             outState.putString(EXTRA_FIELDS_BUNDLE_KEY, TextUtils.join(",", extraFields));
@@ -549,18 +549,18 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         outState.putString(DONE_BUTTON_TEXT_BUNDLE_KEY, doneButtonText);
     }
 
-    abstract Request getRequestForLoadData(Session session);
+    public abstract Request getRequestForLoadData(Session session);
 
-    abstract PickerFragmentAdapter<T> createAdapter();
+    public abstract PickerFragmentAdapter<T> createAdapter();
 
-    abstract LoadingStrategy createLoadingStrategy();
+    public abstract LoadingStrategy createLoadingStrategy();
 
-    abstract SelectionStrategy createSelectionStrategy();
+    public abstract SelectionStrategy createSelectionStrategy();
 
     void onLoadingData() {
     }
 
-    String getDefaultTitleText() {
+    public String getDefaultTitleText() {
         return null;
     }
 
@@ -568,7 +568,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         return getString(R.string.com_facebook_picker_done_button_text);
     }
 
-    void displayActivityCircle() {
+    public void displayActivityCircle() {
         if (activityCircle != null) {
             layoutActivityCircle();
             activityCircle.setVisibility(View.VISIBLE);
@@ -582,7 +582,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         setAlpha(activityCircle, alpha);
     }
 
-    void hideActivityCircle() {
+    public void hideActivityCircle() {
         if (activityCircle != null) {
             // We use an animation to dim the activity circle; need to clear this or it will remain visible.
             activityCircle.clearAnimation();
@@ -590,7 +590,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         }
     }
 
-    void setSelectionStrategy(SelectionStrategy selectionStrategy) {
+    public void setSelectionStrategy(SelectionStrategy selectionStrategy) {
         if (selectionStrategy != this.selectionStrategy) {
             this.selectionStrategy = selectionStrategy;
             if (adapter != null) {
@@ -600,7 +600,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         }
     }
 
-    void logAppEvents(boolean doneButtonClicked) {
+    public void logAppEvents(boolean doneButtonClicked) {
     }
 
     private static void setAlpha(View view, float alpha) {
@@ -873,7 +873,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         boolean includeItem(T graphObject);
     }
 
-    abstract class LoadingStrategy {
+    public abstract class LoadingStrategy {
         protected final static int CACHED_RESULT_REFRESH_DELAY = 2 * 1000;
 
         protected GraphObjectPagingLoader<T> loader;
@@ -954,28 +954,28 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
             return !adapter.isEmpty() || loader.isLoading();
         }
 
-        protected GraphObjectPagingLoader<T> onCreateLoader() {
+        public GraphObjectPagingLoader<T> onCreateLoader() {
             return new GraphObjectPagingLoader<T>(getActivity(), graphObjectClass);
         }
 
-        protected void onStartLoading(GraphObjectPagingLoader<T> loader, Request request) {
+        public void onStartLoading(GraphObjectPagingLoader<T> loader, Request request) {
             displayActivityCircle();
         }
 
-        protected void onLoadReset(GraphObjectPagingLoader<T> loader) {
+        public void onLoadReset(GraphObjectPagingLoader<T> loader) {
             adapter.changeCursor(null);
         }
 
-        protected void onLoadFinished(GraphObjectPagingLoader<T> loader, SimpleGraphObjectCursor<T> data) {
+        public void onLoadFinished(GraphObjectPagingLoader<T> loader, SimpleGraphObjectCursor<T> data) {
             updateAdapter(data);
         }
 
-        protected boolean canSkipRoundTripIfCached() {
+        public boolean canSkipRoundTripIfCached() {
             return true;
         }
     }
 
-    abstract class SelectionStrategy {
+    public abstract class SelectionStrategy {
         abstract boolean isSelected(String id);
 
         abstract void toggleSelection(String id);
@@ -993,7 +993,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         abstract void readSelectionFromBundle(Bundle inBundle, String key);
     }
 
-    class SingleSelectionStrategy extends SelectionStrategy {
+    public class SingleSelectionStrategy extends SelectionStrategy {
         private String selectedId;
 
         public Collection<String> getSelectedIds() {
@@ -1103,7 +1103,7 @@ public abstract class PickerFragment<T extends GraphObject> extends Fragment {
         }
     }
 
-    abstract class PickerFragmentAdapter<U extends GraphObject> extends GraphObjectAdapter<T> {
+    public abstract class PickerFragmentAdapter<U extends GraphObject> extends GraphObjectAdapter<T> {
         public PickerFragmentAdapter(Context context) {
             super(context);
         }

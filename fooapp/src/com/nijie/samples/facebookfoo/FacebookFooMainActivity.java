@@ -17,9 +17,8 @@
 package com.nijie.samples.facebookfoo;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.Context;
-
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -34,11 +33,30 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.facebook.*;
+
+import com.facebook.AccessToken;
+import com.facebook.AppEventsLogger;
+import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.FacebookRequestError;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphPlace;
 import com.facebook.model.GraphUser;
-import com.facebook.widget.*;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.FriendPickerFragment;
+import com.facebook.widget.LoginButton;
+import com.facebook.widget.PickerFragment;
+import com.facebook.widget.PlacePickerFragment;
+import com.facebook.widget.ProfilePictureView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,9 +64,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 
 
 public class FacebookFooMainActivity extends FragmentActivity {
@@ -85,7 +101,7 @@ public class FacebookFooMainActivity extends FragmentActivity {
 	private final Context mContext = null;
 	private String page_id = null;
 
-    private final HashMap<String, PostsRecord> pendingRequests = new HashMap<String, PostsRecord>();
+    private final HashMap<String, PostsRecord> postsTable = new HashMap<String, PostsRecord>();
 	
 
     private enum PendingAction {
@@ -279,8 +295,8 @@ public class FacebookFooMainActivity extends FragmentActivity {
 		
         boolean enableButtons = (session != null && session.isOpened());
 
-        postRegularPostButton.setEnabled(enableButtons || canPresentShareDialog);
-        postUnpublishedPostButton.setEnabled(enableButtons || canPresentShareDialogWithPhotos);
+        postRegularPostButton.setEnabled(enableButtons);
+        postUnpublishedPostButton.setEnabled(enableButtons);
         listAllPostsButton.setEnabled(enableButtons);
         showStatisticsButton.setEnabled(enableButtons);
 
@@ -351,10 +367,12 @@ public class FacebookFooMainActivity extends FragmentActivity {
                 .setLink("http://developers.facebook.com/android");
     }
 
+	//[NJ] Doing the actual job to make a request to "/{page_id}/feed" with intended published flag
 	private void postStatusUpdate(boolean published){
 		if (user != null && hasPublishPermission()) {
 		   final String message = getString(R.string.status_update, user.getFirstName(), (new Date().toString()));
-		   final String graphPath = "435557046594813/feed";
+		   final String graphPath = page_id+"/feed";
+		   //final String graphPath = "435557046594813/feed";
 		   Request request = Request
 				   .newStatusUpdateRequest(Session.getActiveSession(),graphPath, message, published, new Request.Callback() {
 					   @Override
@@ -370,27 +388,6 @@ public class FacebookFooMainActivity extends FragmentActivity {
 
 
 	}
-
-
-    private void postStatusUpdate() {
-        if (false) {
-            FacebookDialog shareDialog = createShareDialogBuilderForLink().build();
-            uiHelper.trackPendingDialogCall(shareDialog.present());
-        } else if (user != null && hasPublishPermission()) {
-            final String message = getString(R.string.status_update, user.getFirstName(), (new Date().toString()));
-			final String graphPath = "435557046594813/feed";
-            Request request = Request
-                    .newStatusUpdateRequest(Session.getActiveSession(),graphPath, message, true, new Request.Callback() {
-                        @Override
-                        public void onCompleted(Response response) {
-                            showPublishResult(message, response.getGraphObject(), response.getError());
-                        }
-                    });
-            request.executeAsync();
-        } else {
-            pendingAction = PendingAction.POST_PUBLISHED;
-        }
-    }
 
     private void onClickPostUnpublishedPost() {
         performPublish(PendingAction.POST_UNPUBLISHED, canPresentShareDialog);
@@ -440,7 +437,7 @@ public class FacebookFooMainActivity extends FragmentActivity {
         // We want the fragment fully created so we can use it immediately.
         fm.executePendingTransactions();
 
-        fragment.loadData(false);
+        fragment.loadData(true);
     }
 
 	private void showListPostsFragment(ListPostsFragment fragment){
@@ -459,21 +456,64 @@ public class FacebookFooMainActivity extends FragmentActivity {
 
 	}
 
+	private void parsePagePosts(GraphObject result, FacebookRequestError error){
+        String title = null;
+        String alertMessage = null;
+
+        if (error == null) {
+			Log.d("facebookfoo ###############", "retrievig posts success");
+			try {
+			JSONArray page_posts = result.getInnerJSONObject().getJSONArray("data");
+
+			 Log.d("facebookfoo ###############", "retrievig user posts length : "+page_posts.length());
+
+			for (int i = 0; i < page_posts.length(); i++) {
+				   Log.d("facebookfoo ##############", "post id : " +i );
+				   JSONObject item = page_posts.getJSONObject(i);
+				   String post_id = item.getString("id");
+				   //Log.d("facebookfoo ##############", "post id : " + post_id);
+				   String story = item.getString("story");
+				   //Log.d("facebookfoo ##############","story : " + story);
+				   String message = item.getString("type");
+				   //Log.d("facebookfoo ##############","type : " + message);
+				   String updated_time = item.getString("updated_time");
+				  // Log.d("facebookfoo ##############","updated_time : " + updated_time);
+				   //boolean ispublished = item.getString("")
+				   if(!postsTable.containsKey(post_id)){
+				   	 postsTable.put(post_id, new PostsRecord(post_id, story, message, updated_time, true));
+				   }
+				  
+				   
+				   
+ 				  
+				  // Log.d("facebookfoo ##############","is_published : " + );
+				   
+				   
+			
+			   }
+			} catch (Exception e) {}
+
+
+
+
+        } else {
+			Log.d("facebookfoo ###############", "retrievig page posts fail");
+        }
+
+	}
+
     private void onClickListAllPosts() {
-		if(page_id == null) return;
+
+	
+		final ListPostsFragment fragment = new ListPostsFragment();
+
+		fragment.setTargetPageID(page_id);
 		
-		final String graphPath = page_id+"/promotable_posts";
-		Request request = Request.newMyPageRequest(userInfoSession, graphPath, new Request.GraphUserCallback() {
-			@Override
-			public void onCompleted(GraphUser me,  Response response) {
-
-				Log.d("facebookfoo ###############", "response "+ response.toString());
-			 
-
-			}
-		});
-		Request.executeBatchAsync(request);
-
+		fragment.setTitleText(getString(R.string.listpost_title));
+		
+		setListPostListeners(fragment);
+		
+		showPickerFragment(fragment);
 
     }
 
@@ -525,19 +565,49 @@ public class FacebookFooMainActivity extends FragmentActivity {
         showAlert(getString(R.string.you_picked), result);
     }
 
+
+    private void onPostListDone(ListPostsFragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack();
+
+        String result = "";
+
+
+    }
+
+	private void setListPostListeners(final ListPostsFragment fragment) {
+		 fragment.setOnDoneButtonClickedListener(new ListPostsFragment.OnDoneButtonClickedListener() {
+			 @Override
+			 public void onDoneButtonClicked(PickerFragment<?> pickerFragment) {
+				 onPostListDone(fragment);
+			 }
+		 });
+		 fragment.setOnSelectionChangedListener(new ListPostsFragment.OnSelectionChangedListener() {
+			 @Override
+			 public void onSelectionChanged(PickerFragment<?> pickerFragment) {
+				 if (fragment.getSelection() != null) {
+					 onPostListDone(fragment);
+				 }
+			 }
+		 });
+	 }
+
+
     private void onClickShowStatistics() {
-	
-		Request request = Request.newMyAccountsRequest(userInfoSession, new Request.GraphUserCallback() {
+
+		if(page_id == null) return;
+		
+		final String graphPath = page_id+"/promotable_posts";
+		Request request = Request.newMyPageRequest(userInfoSession, graphPath, new Request.GraphUserCallback() {
 			@Override
 			public void onCompleted(GraphUser me,  Response response) {
-
+		
 				Log.d("facebookfoo ###############", "response "+ response.toString());
+				parsePagePosts(response.getGraphObject(), response.getError());
 			 
-
 			}
 		});
 		Request.executeBatchAsync(request);
-
 
     }
 

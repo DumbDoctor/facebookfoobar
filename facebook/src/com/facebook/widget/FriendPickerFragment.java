@@ -209,7 +209,7 @@ public class FriendPickerFragment extends PickerFragment<GraphUser> {
         setFriendPickerSettingsFromBundle(inState);
     }
 
-    void saveSettingsToBundle(Bundle outState) {
+    public void saveSettingsToBundle(Bundle outState) {
         super.saveSettingsToBundle(outState);
 
         outState.putString(USER_ID_BUNDLE_KEY, userId);
@@ -217,7 +217,7 @@ public class FriendPickerFragment extends PickerFragment<GraphUser> {
     }
 
     @Override
-    PickerFragmentAdapter<GraphUser> createAdapter() {
+    public PickerFragmentAdapter<GraphUser> createAdapter() {
         PickerFragmentAdapter<GraphUser> adapter = new PickerFragmentAdapter<GraphUser>(
                 this.getActivity()) {
 
@@ -241,17 +241,17 @@ public class FriendPickerFragment extends PickerFragment<GraphUser> {
     }
 
     @Override
-    LoadingStrategy createLoadingStrategy() {
+    public LoadingStrategy createLoadingStrategy() {
         return new ImmediateLoadingStrategy();
     }
 
     @Override
-    SelectionStrategy createSelectionStrategy() {
+    public SelectionStrategy createSelectionStrategy() {
         return multiSelect ? new MultiSelectionStrategy() : new SingleSelectionStrategy();
     }
 
     @Override
-    Request getRequestForLoadData(Session session) {
+    public Request getRequestForLoadData(Session session) {
         if (adapter == null) {
             throw new FacebookException("Can't issue requests until Fragment has been created.");
         }
@@ -261,12 +261,12 @@ public class FriendPickerFragment extends PickerFragment<GraphUser> {
     }
 
     @Override
-    String getDefaultTitleText() {
+    public String getDefaultTitleText() {
         return getString(R.string.com_facebook_choose_friends);
     }
 
     @Override
-    void logAppEvents(boolean doneButtonClicked) {
+    public void logAppEvents(boolean doneButtonClicked) {
         AppEventsLogger logger = AppEventsLogger.newLogger(this.getActivity(), getSession());
         Bundle parameters = new Bundle();
 
@@ -328,7 +328,7 @@ public class FriendPickerFragment extends PickerFragment<GraphUser> {
 
     private class ImmediateLoadingStrategy extends LoadingStrategy {
         @Override
-        protected void onLoadFinished(GraphObjectPagingLoader<GraphUser> loader,
+        public void onLoadFinished(GraphObjectPagingLoader<GraphUser> loader,
                 SimpleGraphObjectCursor<GraphUser> data) {
             super.onLoadFinished(loader, data);
 
@@ -354,7 +354,7 @@ public class FriendPickerFragment extends PickerFragment<GraphUser> {
         }
 
         @Override
-        protected boolean canSkipRoundTripIfCached() {
+        public boolean canSkipRoundTripIfCached() {
             return friendPickerType.isCacheable();
         }
 
